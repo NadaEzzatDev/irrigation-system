@@ -1,0 +1,474 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Irrigation Wiring Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Lexend:wght@400;500;600&display=swap">
+<style>
+/* Layout: a lab-bench stage (the circuit) on the left, a story card on the right; stacks on narrow screens. */
+:root{
+  --bg:#e9efe9; --stage:#f7faf6; --dot:#d3ddd3; --ink:#15211b; --muted:#56655c;
+  --card:#ffffff; --line:#cfd9d0; --accent:#b3121b; --accent-ink:#ffffff;
+  --ok:#1f7a3a; --ok-bg:#e3f4e8; --bad:#b3121b; --bad-bg:#fbe7e7; --chip:#eef3ee;
+  --w-power:#d62828; --w-gnd:#262626; --w-sig:#e0a100; --w-ctrl:#7b3fe4; --w-motor:#e8742a; --tube:#3a8ee6;
+  --case:#ffffff; --label:#15211b;
+  --f-display:"Chakra Petch", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Lexend", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0f1517; --stage:#151d20; --dot:#243035; --ink:#e5ece7; --muted:#9aa9a1;
+  --card:#1a2326; --line:#2c393d; --accent:#ff5a5f; --accent-ink:#1a0a0b;
+  --ok:#6fd38f; --ok-bg:#163223; --bad:#ff7b7f; --bad-bg:#3a1a1c; --chip:#212c2f;
+  --w-gnd:#2a2a2a; --case:#cfd8d3; --label:#e5ece7; color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --bg:#0f1517; --stage:#151d20; --dot:#243035; --ink:#e5ece7; --muted:#9aa9a1;
+  --card:#1a2326; --line:#2c393d; --accent:#ff5a5f; --accent-ink:#1a0a0b;
+  --ok:#6fd38f; --ok-bg:#163223; --bad:#ff7b7f; --bad-bg:#3a1a1c; --chip:#212c2f;
+  --w-gnd:#2a2a2a; --case:#cfd8d3; --label:#e5ece7; color-scheme:dark; }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.5; padding-inline:16px; padding-block:12px 20px}
+.top{display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; max-width:1400px; margin:0 auto 10px}
+.brand{font-family:var(--f-display); font-weight:700; font-size:1.25rem; letter-spacing:.02em}
+.brand small{display:block; font-size:.72rem; font-weight:600; color:var(--muted); letter-spacing:.14em; text-transform:uppercase}
+.steps{display:flex; flex-wrap:wrap; gap:6px; margin-left:auto}
+.steps button{font:600 .8rem/1 var(--f-display); border:1px solid var(--line); background:var(--card); color:var(--muted); border-radius:999px; padding:7px 11px; cursor:pointer}
+.steps button[aria-current="step"]{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+.steps button.done{color:var(--ink)}
+.wrap{display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); gap:16px; max-width:1400px; margin:0 auto; align-items:start}
+@media (max-width:900px){ .wrap{grid-template-columns:minmax(0,1fr)} }
+.stage{background:var(--stage); background-image:radial-gradient(var(--dot) 1.2px, transparent 1.3px); background-size:22px 22px; border:1px solid var(--line); border-radius:14px; padding:8px; position:sticky; top:env(safe-area-inset-top,0px)}
+@media (max-width:900px){ .stage{position:static} }
+svg{display:block; width:100%; height:auto; max-height:calc(100vh - 120px)}
+.panel{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px 24px; min-width:0; display:flex; flex-direction:column; gap:14px}
+.kicker{font:600 .78rem/1 var(--f-display); letter-spacing:.14em; text-transform:uppercase; color:var(--accent)}
+h1{font-family:var(--f-display); font-size:clamp(1.5rem,2.4vw,2.1rem); line-height:1.15; margin:0; text-wrap:balance}
+.story p{margin:0 0 10px; max-width:62ch}
+.story p:last-child{margin-bottom:0}
+.story b{font-weight:600}
+.q{border:1px solid var(--line); border-radius:12px; padding:16px; background:var(--chip); display:flex; flex-direction:column; gap:10px}
+.q .qt{font-family:var(--f-display); font-weight:600; font-size:1.15rem; display:flex; gap:10px; align-items:baseline}
+.q .qt span{font-size:.75rem; letter-spacing:.12em; color:var(--accent); flex:none}
+.opts{display:grid; gap:8px}
+.opts button{font:500 1rem/1.35 var(--f-body); text-align:left; padding:11px 14px; border-radius:10px; border:1.5px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer}
+.opts button:hover{border-color:var(--accent)}
+.opts button.right{border-color:var(--ok); background:var(--ok-bg)}
+.opts button.wrong{border-color:var(--bad); background:var(--bad-bg); animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.fb{border-radius:10px; padding:10px 14px; font-size:.98rem}
+.fb.ok{background:var(--ok-bg); color:var(--ink); border-left:4px solid var(--ok)}
+.fb.no{background:var(--bad-bg); color:var(--ink); border-left:4px solid var(--bad)}
+.reveal{align-self:flex-start; font:500 .85rem var(--f-body); background:none; border:none; color:var(--muted); text-decoration:underline; cursor:pointer; padding:0}
+.nav{display:flex; gap:10px; margin-top:auto; padding-top:6px}
+.nav button{font:600 1rem/1 var(--f-display); padding:13px 20px; border-radius:10px; cursor:pointer; border:1.5px solid var(--line); background:var(--card); color:var(--ink)}
+.nav .next{background:var(--accent); color:var(--accent-ink); border-color:var(--accent); margin-left:auto}
+.nav button:disabled{opacity:.4; cursor:default}
+button:focus-visible, input:focus-visible{outline:3px solid var(--tube); outline-offset:2px}
+table{border-collapse:collapse; width:100%; font-size:.92rem}
+.tw{overflow-x:auto}
+th,td{padding:7px 9px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top}
+th{font-family:var(--f-display); font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.sw{display:inline-block; width:22px; height:6px; border-radius:3px; vertical-align:middle; margin-right:6px; outline:1px solid var(--line)}
+.bars{display:grid; gap:8px}
+.bar{display:grid; grid-template-columns:8.5em minmax(0,1fr) 4.5em; gap:10px; align-items:center; font-size:.92rem}
+.bar .track{height:16px; border-radius:8px; background:var(--chip); border:1px solid var(--line); overflow:hidden}
+.bar .fill{height:100%; border-radius:8px}
+.bar .v{font-variant-numeric:tabular-nums; font-weight:600}
+.truth{font-variant-numeric:tabular-nums}
+.sim{display:flex; flex-direction:column; gap:10px; border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--chip)}
+.sim label{font-weight:600}
+.sim input[type=range]{width:100%; accent-color:var(--tube)}
+.chain{display:flex; flex-wrap:wrap; gap:6px; align-items:center; font-family:var(--f-display); font-weight:600}
+.chain .pill{padding:5px 10px; border-radius:999px; background:var(--card); border:1px solid var(--line)}
+.chain .pill.on{background:var(--ok-bg); border-color:var(--ok)}
+.chain .pill.off{background:var(--bad-bg); border-color:var(--bad)}
+.chain i{font-style:normal; color:var(--muted)}
+.tip{font-size:.9rem; color:var(--muted)}
+.legend{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.85rem; color:var(--muted); padding:4px 6px 2px}
+
+/* SVG */
+.comp{transition:opacity .35s}
+.dim .comp:not(.focus){opacity:.28}
+.focus .ring{display:block}
+.ring{display:none; fill:none; stroke:var(--accent); stroke-width:3; stroke-dasharray:8 6; animation:march 1s linear infinite}
+@keyframes march{to{stroke-dashoffset:-14}}
+.lbl{font-family:var(--f-display); font-weight:700; fill:var(--label); font-size:15px}
+.pin{font-family:var(--f-display); font-weight:700; font-size:10.5px; fill:#fff}
+.pinD{font-family:var(--f-display); font-weight:700; font-size:11px; fill:var(--label)}
+.wire{fill:none; stroke-width:5; stroke-linecap:round; stroke-linejoin:round}
+.case{fill:none; stroke:var(--case); stroke-width:8.5; stroke-linecap:round; stroke-linejoin:round}
+.wg path{transition:stroke-dashoffset 1.1s ease}
+.wg.hidden path{stroke-dashoffset:1}
+.wg:not(.hidden) path{stroke-dashoffset:0}
+.wg.new .wire{filter:drop-shadow(0 0 4px currentColor)}
+.flow{fill:none; stroke:#fff; stroke-width:2; stroke-dasharray:4 10; stroke-linecap:round; animation:flow .6s linear infinite; opacity:.95}
+@keyframes flow{to{stroke-dashoffset:-14}}
+.waterflow{fill:none; stroke:#bfe0ff; stroke-width:3; stroke-dasharray:6 10; animation:flow .5s linear infinite}
+@media (prefers-reduced-motion: reduce){ .ring,.flow,.waterflow{animation:none} .wg path{transition:none} }
+</style>
+
+<header class="top">
+  <div class="brand"><small>Grade 7 · ICT &amp; STEAM</small>Mini Irrigation System: wiring story</div>
+  <nav class="steps" id="steps" aria-label="Steps"></nav>
+</header>
+
+<main class="wrap">
+  <section class="stage" aria-label="Circuit">
+    <svg id="svg" viewBox="0 0 720 700" role="img" aria-label="Irrigation system circuit">
+      <defs>
+        <linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cc8ff"/><stop offset="1" stop-color="#3a8ee6"/></linearGradient>
+      </defs>
+
+      <!-- tube (plumbing) -->
+      <g class="comp" id="c-tube">
+        <path id="tubePath" d="M100 180 H62 V20 H18 V612 H470 V598" fill="none" stroke="var(--tube)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/>
+        <path id="tubeFlow" class="waterflow" d="M100 180 H62 V20 H18 V612 H470 V598" style="display:none"/>
+      </g>
+
+      <!-- water tank + pump -->
+      <g class="comp" id="c-pump">
+        <rect class="ring" x="30" y="30" width="194" height="196" rx="12"/>
+        <rect x="40" y="40" width="174" height="175" rx="8" fill="#e8f3fb" stroke="#5a7a90" stroke-width="2.5"/>
+        <rect x="42" y="85" width="170" height="128" rx="6" fill="url(#water)" opacity=".75"/>
+        <rect x="100" y="152" width="90" height="48" rx="12" fill="#e7e7e7" stroke="#333" stroke-width="2"/>
+        <text x="145" y="181" text-anchor="middle" font-family="Chakra Petch, sans-serif" font-weight="700" font-size="14" fill="#222">PUMP</text>
+        <text x="127" y="66" text-anchor="middle" class="lbl" style="fill:#2a4a60">Water tank</text>
+      </g>
+
+      <!-- L298N -->
+      <g class="comp" id="c-l298">
+        <rect class="ring" x="400" y="28" width="282" height="236" rx="12"/>
+        <rect x="420" y="40" width="240" height="210" rx="8" fill="#d32f2f" stroke="#222" stroke-width="2"/>
+        <rect x="500" y="52" width="80" height="70" rx="3" fill="#1d1d1d"/>
+        <g stroke="#555" stroke-width="2"><line x1="510" y1="56" x2="510" y2="118"/><line x1="522" y1="56" x2="522" y2="118"/><line x1="534" y1="56" x2="534" y2="118"/><line x1="546" y1="56" x2="546" y2="118"/><line x1="558" y1="56" x2="558" y2="118"/><line x1="570" y1="56" x2="570" y2="118"/></g>
+        <text x="540" y="148" text-anchor="middle" font-family="Chakra Petch, sans-serif" font-weight="700" font-size="20" fill="#fff">L298N</text>
+        <text x="540" y="166" text-anchor="middle" font-family="Lexend, sans-serif" font-size="11" fill="#ffe1e1">H-Bridge motor driver</text>
+        <rect x="410" y="94" width="22" height="72" rx="3" fill="#1e88e5" stroke="#222"/>
+        <circle cx="421" cy="110" r="6" fill="#ddd" stroke="#333"/><circle cx="421" cy="150" r="6" fill="#ddd" stroke="#333"/>
+        <text x="440" y="114" class="pin">OUT1</text><text x="440" y="154" class="pin">OUT2</text>
+        <rect x="648" y="94" width="22" height="72" rx="3" fill="#1e88e5" stroke="#222"/>
+        <circle cx="659" cy="110" r="6" fill="#ddd" stroke="#333"/><circle cx="659" cy="150" r="6" fill="#ddd" stroke="#333"/>
+        <text x="640" y="114" class="pin" text-anchor="end">OUT3</text><text x="640" y="154" class="pin" text-anchor="end">OUT4</text>
+        <rect x="432" y="230" width="72" height="24" rx="3" fill="#1e88e5" stroke="#222"/>
+        <circle cx="445" cy="242" r="6" fill="#ddd" stroke="#333"/><circle cx="468" cy="242" r="6" fill="#ddd" stroke="#333"/><circle cx="491" cy="242" r="6" fill="#ddd" stroke="#333"/>
+        <text x="445" y="222" class="pin" text-anchor="middle">12V</text><text x="468" y="222" class="pin" text-anchor="middle">GND</text><text x="491" y="222" class="pin" text-anchor="middle">5V</text>
+        <rect x="552" y="236" width="84" height="12" rx="2" fill="#111"/>
+        <g fill="#d4af37"><rect x="560" y="238" width="8" height="8"/><rect x="580" y="238" width="8" height="8"/><rect x="600" y="238" width="8" height="8"/><rect x="620" y="238" width="8" height="8"/></g>
+        <text x="564" y="228" class="pin" text-anchor="middle">IN1</text><text x="584" y="228" class="pin" text-anchor="middle">IN2</text><text x="604" y="228" class="pin" text-anchor="middle">IN3</text><text x="624" y="228" class="pin" text-anchor="middle">IN4</text>
+      </g>
+
+      <!-- Battery (lying down, snaps on the right) -->
+      <g class="comp" id="c-batt">
+        <rect class="ring" x="224" y="148" width="158" height="100" rx="12"/>
+        <rect x="232" y="160" width="122" height="76" rx="6" fill="#1b1b1b" stroke="#000"/>
+        <rect x="300" y="160" width="40" height="76" fill="#e0a100"/>
+        <rect x="334" y="160" width="6" height="76" fill="#1b1b1b"/>
+        <text x="268" y="206" text-anchor="middle" font-family="Chakra Petch, sans-serif" font-weight="700" font-size="24" fill="#fff">9V</text>
+        <text x="320" y="202" text-anchor="middle" font-family="Chakra Petch, sans-serif" font-weight="700" font-size="9" fill="#1b1b1b" transform="rotate(-90 320 198)">BATTERY</text>
+        <rect x="354" y="178" width="10" height="14" fill="#bbb" stroke="#333"/>
+        <polygon points="354,208 364,208 366,215 364,222 354,222" fill="#bbb" stroke="#333"/>
+        <text x="352" y="176" text-anchor="end" class="pin" style="font-size:12px">+</text>
+        <text x="352" y="234" text-anchor="end" class="pin" style="font-size:12px">−</text>
+      </g>
+
+      <!-- Breadboard power rails -->
+      <g class="comp" id="c-bb">
+        <rect class="ring" x="296" y="290" width="104" height="262" rx="12"/>
+        <rect x="306" y="300" width="84" height="230" rx="5" fill="#f1f0ea" stroke="#b9b6a8" stroke-width="1.5"/>
+        <line x1="331" y1="304" x2="331" y2="526" stroke="#2f6fd6" stroke-width="2"/>
+        <line x1="374" y1="304" x2="374" y2="526" stroke="#d62828" stroke-width="2"/>
+        <g id="bbHoles" fill="#9c9888"></g>
+        <text x="331" y="546" text-anchor="middle" class="pinD" style="fill:#2f6fd6;font-size:12px">− rail</text>
+        <text x="374" y="546" text-anchor="middle" class="pinD" style="fill:#d62828;font-size:12px">+ rail</text>
+        <text x="296" y="420" text-anchor="middle" class="pinD" transform="rotate(-90 296 420)" style="font-size:11px">BREADBOARD</text>
+      </g>
+
+      <!-- Arduino -->
+      <g class="comp" id="c-uno">
+        <rect class="ring" x="410" y="284" width="302" height="192" rx="12"/>
+        <rect x="420" y="412" width="16" height="30" rx="3" fill="#222"/>
+        <rect x="420" y="300" width="280" height="160" rx="10" fill="#00878f" stroke="#0b4f54" stroke-width="2"/>
+        <rect x="421" y="296" width="276" height="12" rx="2" fill="#111"/>
+        <rect x="440" y="452" width="108" height="12" rx="2" fill="#111"/>
+        <rect x="566" y="452" width="92" height="12" rx="2" fill="#111"/>
+        <g id="unoPins" fill="#777"></g>
+        <rect x="512" y="372" width="118" height="30" rx="3" fill="#1d1d1d"/>
+        <text x="571" y="392" text-anchor="middle" font-family="Chakra Petch, sans-serif" font-size="10" fill="#bbb">ATmega328P</text>
+        <text x="470" y="355" font-family="Chakra Petch, sans-serif" font-weight="700" font-size="22" fill="#fff">Arduino UNO</text>
+        <text x="564" y="325" class="pin" text-anchor="middle">D8</text>
+        <text x="584" y="325" class="pin" text-anchor="middle">D7</text>
+        <text x="493" y="443" class="pin" text-anchor="middle">5V</text>
+        <text x="514" y="431" class="pin" text-anchor="middle" style="font-size:9.5px">GND</text><line x1="512" y1="434" x2="512" y2="450" stroke="#e0f2f1" stroke-width="1"/>
+        <text x="575" y="443" class="pin" text-anchor="middle">A0</text>
+      </g>
+
+      <!-- Plant + soil sensor -->
+      <g class="comp" id="c-sensor">
+        <rect class="ring" x="430" y="490" width="246" height="200" rx="12"/>
+        <polygon points="440,585 670,585 650,688 460,688" fill="#b5653a" stroke="#6d3a1e" stroke-width="2"/>
+        <rect id="soil" x="446" y="585" width="218" height="20" fill="#8a6a4a"/>
+        <g id="plant">
+          <path d="M625 585 V512" stroke="#2e7d32" stroke-width="5" fill="none"/>
+          <path d="M625 548 C 600 530, 588 540, 590 556 C 605 560, 618 556, 625 548 Z" fill="#43a047"/>
+          <path d="M625 532 C 650 512, 664 522, 662 540 C 646 544, 632 540, 625 532 Z" fill="#43a047"/>
+          <path d="M625 514 C 612 496, 620 488, 630 492 C 636 500, 632 508, 625 514 Z" fill="#66bb6a"/>
+        </g>
+        <polygon points="513,566 525,566 525,660 519,670 513,660" fill="#c9a227" stroke="#6b5410"/>
+        <polygon points="545,566 557,566 557,660 551,670 545,660" fill="#c9a227" stroke="#6b5410"/>
+        <rect x="503" y="540" width="64" height="28" rx="4" fill="#d32f2f" stroke="#222"/>
+        <text x="535" y="559" text-anchor="middle" font-family="Chakra Petch, sans-serif" font-weight="700" font-size="9.5" fill="#fff">SOIL SENSOR</text>
+        <text x="498" y="562" class="pinD" text-anchor="end" style="font-size:10px">VCC GND SIG</text>
+        <text x="455" y="680" class="pin" style="fill:#ffe9dc">Plant pot</text>
+      </g>
+
+      
+<g id="wires"></g>
+      <g id="flows"></g>
+      <g id="callouts"></g>
+    </svg>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--w-power)"></i>Power (+)</span>
+      <span><i class="sw" style="background:var(--w-gnd)"></i>Ground (−)</span>
+      <span><i class="sw" style="background:var(--w-sig)"></i>Sensor signal</span>
+      <span><i class="sw" style="background:var(--w-ctrl)"></i>Arduino orders</span>
+      <span><i class="sw" style="background:var(--tube)"></i>Water tube</span>
+    </div>
+  </section>
+
+  <section class="panel" aria-live="polite">
+    <div class="kicker" id="kicker"></div>
+    <h1 id="title"></h1>
+    <div class="story" id="story"></div>
+    <div id="extra"></div>
+    <div id="qbox"></div>
+    <div class="nav">
+      <button id="back" type="button">← Back</button>
+      <button id="next" class="next" type="button">Next →</button>
+    </div>
+  </section>
+</main>
+
+<script>
+(function(){
+const NS = "http://www.w3.org/2000/svg";
+const $ = id => document.getElementById(id);
+
+// header pins on the Arduino (decorative + real positions)
+const top = [429,444,459,474,489,504,519,534,549,564,584,599,614,629,644,659,674,689];
+const bot = [448,463,478,495,512,527,542,575,590,605,620,635,650];
+const pg = $("unoPins");
+top.forEach(x=>{ const r=document.createElementNS(NS,"rect"); r.setAttribute("x",x-3.5); r.setAttribute("y",298.5); r.setAttribute("width",7); r.setAttribute("height",7); pg.appendChild(r); });
+bot.forEach(x=>{ const r=document.createElementNS(NS,"rect"); r.setAttribute("x",x-3.5); r.setAttribute("y",454.5); r.setAttribute("width",7); r.setAttribute("height",7); pg.appendChild(r); });
+
+// wires: id, color var, points, step that reveals them
+const W = {
+  b_pos: {c:"--w-power", p:"364,185 390,185 390,262 445,262 445,248", from:"Battery +", to:"L298N 12V"},
+  b_neg: {c:"--w-gnd",   p:"366,215 380,215 380,272 462,272 462,248", from:"Battery −", to:"L298N GND"},
+  l_gnd: {c:"--w-gnd",   p:"474,248 474,282 331,282 331,312", from:"L298N GND", to:"Breadboard − rail"},
+  l_5v:  {c:"--w-power", p:"491,248 491,292 374,292 374,312", from:"L298N 5V", to:"Breadboard + rail"},
+  u_5v:  {c:"--w-power", p:"374,470 495,470 495,458", from:"Breadboard + rail", to:"Arduino 5V"},
+  u_gnd: {c:"--w-gnd",   p:"331,484 512,484 512,458", from:"Breadboard − rail", to:"Arduino GND"},
+  s_vcc: {c:"--w-power", p:"515,540 515,510 374,510", from:"Sensor VCC", to:"Breadboard + rail"},
+  s_gnd: {c:"--w-gnd",   p:"535,540 535,497 331,497", from:"Sensor GND", to:"Breadboard − rail"},
+  s_sig: {c:"--w-sig",   p:"555,540 555,522 575,522 575,458", from:"Sensor SIG", to:"Arduino A0"},
+  in1:   {c:"--w-ctrl",  p:"564,302 564,244", from:"Arduino D8", to:"L298N IN1"},
+  in2:   {c:"--w-ctrl",  p:"584,302 584,244", from:"Arduino D7", to:"L298N IN2"},
+  p_red: {c:"--w-power", p:"125,152 125,110 421,110", from:"Pump red (+)", to:"L298N OUT1"},
+  p_blk: {c:"--w-gnd",   p:"168,152 168,130 400,130 400,150 421,150", from:"Pump black (−)", to:"L298N OUT2"},
+};
+// breadboard rail holes
+(function(){ const h=document.getElementById("bbHoles"); for(let y=318;y<=520;y+=12){ for(const x of [323,339,366,382]){ const r=document.createElementNS("http://www.w3.org/2000/svg","rect"); r.setAttribute("x",x-2); r.setAttribute("y",y-2); r.setAttribute("width",4); r.setAttribute("height",4); h.appendChild(r);} } })();
+const wg = $("wires");
+for (const [id,w] of Object.entries(W)){
+  const g = document.createElementNS(NS,"g"); g.setAttribute("class","wg hidden"); g.id="w-"+id;
+  g.style.color = `var(${w.c})`;
+  const cs = document.createElementNS(NS,"polyline"); cs.setAttribute("points",w.p); cs.setAttribute("class","case");
+  const wl = document.createElementNS(NS,"polyline"); wl.setAttribute("points",w.p); wl.setAttribute("class","wire"); wl.setAttribute("stroke",`var(${w.c})`);
+  [cs,wl].forEach(el=>{ el.setAttribute("pathLength","1"); el.style.strokeDasharray="1"; });
+  // polyline isn't "path" — use a selector that covers both
+  g.appendChild(cs); g.appendChild(wl); wg.appendChild(g);
+}
+// transition applies to polylines too
+const st = document.createElement("style"); st.textContent = ".wg polyline{transition:stroke-dashoffset 1.1s ease}.wg.hidden polyline{stroke-dashoffset:1}.wg:not(.hidden) polyline{stroke-dashoffset:0}@media (prefers-reduced-motion: reduce){.wg polyline{transition:none}}"; document.head.appendChild(st);
+
+const ALL = ["c-pump","c-l298","c-batt","c-uno","c-sensor","c-tube","c-bb"];
+
+const STEPS = [
+ { k:"The problem", t:"Our plant is thirsty", focus:[],
+   s:`<p>We want a plant that <b>waters itself</b>. When the soil gets dry, water should flow from the tank to the plant – with nobody pressing a button and <b>no computer</b> connected.</p>
+      <p>Here is our team of components. Nothing is connected yet. Step by step, we will work out <b>which wire goes where, and why</b>.</p>`,
+   extra:`<div class="tw"><table><tr><th>Component</th><th>Its job in the story</th></tr>
+     <tr><td><b>Arduino UNO</b></td><td>The brain – reads and decides</td></tr>
+     <tr><td><b>Soil moisture sensor</b></td><td>The finger that feels the soil</td></tr>
+     <tr><td><b>Water pump</b></td><td>The muscle that moves water</td></tr>
+     <tr><td><b>L298N H-Bridge</b></td><td>The strong switch for the pump</td></tr>
+     <tr><td><b>9V battery</b></td><td>The only energy source for everything</td></tr>
+     <tr><td><b>Breadboard</b></td><td>Shares + and − with many parts</td></tr></table></div>` },
+
+ { k:"Step 1 · The big question", t:"Can the Arduino turn on the pump by itself?", focus:["c-uno","c-pump"],
+   s:`<p>The Arduino decides when to water. So why not connect the pump straight to an Arduino pin?</p>
+      <p>Let’s compare how much electric current each one has or needs.</p>`,
+   extra:`<div class="bars">
+      <div class="bar"><span>Arduino pin gives</span><div class="track"><div class="fill" style="width:10%;background:var(--w-ctrl)"></div></div><span class="v">20 mA</span></div>
+      <div class="bar"><span>Pump needs</span><div class="track"><div class="fill" style="width:100%;background:var(--w-motor)"></div></div><span class="v">~200 mA</span></div></div>`,
+   q:{ q:"Should we connect the pump directly to an Arduino pin?",
+       o:[["Yes – the Arduino is the brain, it can do it",false,"The brain is smart but weak! A pin gives about 20 mA. The pump needs about 10 times more and could damage the Arduino."],
+          ["No – the pin’s electricity is too weak for a motor",true,"Exactly. The Arduino should only <b>give orders</b>. We need a strong helper to drive the pump: the <b>H-Bridge</b>."]] } },
+
+ { k:"Step 2 · Meet the helper", t:"The H-Bridge: a strong switch", focus:["c-l298"],
+   s:`<p>The <b>L298N H-Bridge</b> listens to small signals from the Arduino on <b>IN1–IN4</b> and switches big power to motors on <b>OUT1–OUT4</b>.</p>
+      <p>The Arduino <b>whispers</b> “pump ON”, and the H-Bridge <b>shouts</b> it with real power. It can drive 2 motors: Motor A on OUT1/OUT2 and Motor B on OUT3/OUT4.</p>`,
+   q:{ q:"The H-Bridge must give strong power to the pump. Where does that power come from?",
+       o:[["From the Arduino pin",false,"No – we just learned the Arduino pin is too weak."],
+          ["From the battery",true,"Yes! The battery is the energy source. The H-Bridge only directs it."],
+          ["From the soil sensor",false,"The sensor only sends a reading. It has no extra energy to give."]] } },
+
+ { k:"Step 3 · Power in", t:"Connect the battery to the H-Bridge", focus:["c-batt","c-l298"], wires:["b_pos","b_neg"],
+   s:`<p>The battery goes into the blue power terminal on the H-Bridge:</p>
+      <p><b style="color:var(--w-power)">Battery +</b> → <b>12V</b> (power input)<br><b>Battery −</b> → <b>GND</b></p>
+      <p class="tip">The terminal says 12V, but 7–12 V works. Our 9V battery is fine.</p>` },
+
+ { k:"Step 4 · No computer", t:"Where does the Arduino get its power?", focus:["c-l298","c-bb"], wires:["l_5v","l_gnd"],
+   s:`<p>We are <b>not</b> using a USB cable, so the Arduino needs power from the battery too. Luckily, the H-Bridge has a helper inside that turns the battery’s 9V into a safe <b>5V</b>, and gives it out on the <b>5V</b> pin.</p>
+      <p>We send this 5V and the GND to the <b>breadboard rails</b>, so many parts can share them.</p>`,
+   q:{ q:"Which H-Bridge pins should go to the breadboard rails?",
+       o:[["12V → + rail and GND → − rail",false,"Careful! 12V is the battery’s full voltage. Sending it to the Arduino’s 5V pin or the sensor can damage them."],
+          ["5V → + rail and GND → − rail",true,"Correct! <b>L298N 5V → + rail</b> (red) and <b>L298N GND → − rail</b> (blue). Now the breadboard has safe 5V power."]] } },
+
+ { k:"Step 5 · Wake up the brain", t:"Power the Arduino from the breadboard", focus:["c-bb","c-uno"], wires:["u_5v","u_gnd"],
+   s:`<p>Two wires take the power from the breadboard to the Arduino’s power pins:</p>
+      <p><b style="color:var(--w-power)">+ rail</b> → <b>Arduino 5V</b><br><b>− rail</b> → <b>Arduino GND</b></p>
+      <p>Now the Arduino and the H-Bridge also share the same <b>ground</b>. That is important: a signal is like measuring height – “HIGH” only means something if both measure from the <b>same floor</b>.</p>`,
+   q:{ q:"Why must the Arduino GND and the H-Bridge GND be connected?",
+       o:[["So the Arduino’s signals make sense to the H-Bridge",true,"Yes! A shared ground is the common reference. Without it, the H-Bridge may ignore the Arduino’s orders."],
+          ["To make the battery last longer",false,"Not quite. Ground is about having the same reference point for signals."]] } },
+
+ { k:"Step 6 · The sensor", t:"How does the Arduino know the soil is dry?", focus:["c-sensor","c-bb","c-uno"], wires:["s_vcc","s_gnd","s_sig"],
+   s:`<p>The soil sensor pushes two metal legs into the soil. Wet soil lets more electricity pass between them, so the sensor sends a <b>number that changes</b> between dry and wet.</p>
+      <p>It takes its power from the breadboard: <b>VCC → + rail</b>, <b>GND → − rail</b>. Its third pin, <b>SIG</b>, carries the reading.</p>`,
+   q:{ q:"The reading is a number from 0 to 1023. Which Arduino pin can read it?",
+       o:[["D7 – a digital pin",false,"Digital pins only understand ON or OFF (HIGH/LOW). They can’t read a number like 512."],
+          ["A0 – an analog pin",true,"Right! Analog pins (A0–A5) read values from 0 to 1023. <b>SIG → A0</b>."],
+          ["5V – the power pin",false,"5V gives power, it doesn’t read anything."]] } },
+
+ { k:"Step 7 · Orders", t:"The Arduino gives the orders", focus:["c-uno","c-l298"], wires:["in1","in2"],
+   s:`<p>Two purple wires carry the Arduino’s orders: <b>D8 → IN1</b> and <b>D7 → IN2</b>. These control Motor A (OUT1/OUT2).</p>`,
+   extra:`<div class="tw"><table class="truth"><tr><th>IN1 (D8)</th><th>IN2 (D7)</th><th>Pump</th></tr>
+     <tr><td>HIGH</td><td>LOW</td><td><b>ON</b> – water flows</td></tr>
+     <tr><td>LOW</td><td>LOW</td><td><b>OFF</b> – no water</td></tr></table></div>
+     <p class="tip" style="margin-top:8px">On the real board, keep the small black jumpers on <b>ENA</b> and on <b>5V-EN</b> in place – ENA switches Motor A on, and 5V-EN makes the 5V pin work.</p>`,
+   q:{ q:"The soil is dry. What should the Arduino send?",
+       o:[["IN1 = LOW, IN2 = LOW",false,"That is the OFF command – the plant stays thirsty."],
+          ["IN1 = HIGH, IN2 = LOW",true,"Yes! HIGH on IN1 and LOW on IN2 turns the pump ON."]] } },
+
+ { k:"Step 8 · The muscle", t:"Connect the pump", focus:["c-pump","c-l298"], wires:["p_red","p_blk"],
+   s:`<p>The pump has 2 wires. They go to the H-Bridge outputs, <b>not</b> to the Arduino.</p>`,
+   q:{ q:"IN1 and IN2 control Motor A. Which outputs should the pump use?",
+       o:[["OUT1 and OUT2",true,"Correct! <b>Pump red → OUT1</b>, <b>pump black → OUT2</b>. If the pump doesn’t push water, swap these two wires."],
+          ["OUT3 and OUT4",false,"OUT3/OUT4 belong to Motor B, which is controlled by IN3/IN4. We didn’t connect those."]] } },
+
+ { k:"Step 9 · Try it", t:"Run the whole system", focus:[], sim:true,
+   s:`<p>Every wire is in place and the battery powers everything. Move the slider to dry out the soil and watch the story run: <b>Detect → Decide → Water</b>.</p>` },
+
+ { k:"Summary", t:"All the connections", focus:[], table:true,
+   s:`<p>Use this checklist when you build the real circuit. Check each wire off with your partner.</p>` },
+];
+
+let cur = 0;
+const answered = new Set();
+const stepsNav = $("steps");
+STEPS.forEach((s,i)=>{ const b=document.createElement("button"); b.type="button"; b.textContent = i===0?"Start":(i===STEPS.length-1?"Summary":i); b.title=s.t; b.onclick=()=>go(i); stepsNav.appendChild(b); });
+
+function wiresShown(){
+  const on = new Set();
+  STEPS.forEach((s,i)=>{ if(!s.wires) return; if(i<cur || (i===cur && (!s.q || answered.has(i)))) s.wires.forEach(w=>on.add(w)); });
+  return on;
+}
+function render(){
+  const s = STEPS[cur];
+  $("kicker").textContent = s.k;
+  $("title").textContent = s.t;
+  $("story").innerHTML = s.s;
+  $("extra").innerHTML = s.extra || "";
+  [...stepsNav.children].forEach((b,i)=>{ b.toggleAttribute("aria-current", false); if(i===cur) b.setAttribute("aria-current","step"); b.classList.toggle("done", i<cur); });
+  // focus
+  const svg = $("svg");
+  svg.classList.toggle("dim", s.focus.length>0);
+  ALL.forEach(id=>$(id).classList.toggle("focus", s.focus.includes(id)));
+  if (s.focus.includes("c-pump")) $("c-tube").classList.add("focus");
+  updateWires();
+  // question
+  const qb = $("qbox"); qb.innerHTML="";
+  if (s.q){
+    const box = document.createElement("div"); box.className="q";
+    box.innerHTML = `<div class="qt"><span>QUESTION</span>${s.q.q}</div>`;
+    const opts = document.createElement("div"); opts.className="opts";
+    const fb = document.createElement("div");
+    s.q.o.forEach(([txt,ok,why],j)=>{
+      const b=document.createElement("button"); b.type="button"; b.id=`opt-${cur}-${j}`; b.innerHTML=txt;
+      b.onclick=()=>{ b.classList.remove("wrong"); void b.offsetWidth; b.classList.add(ok?"right":"wrong");
+        fb.className = "fb " + (ok?"ok":"no"); fb.innerHTML = why;
+        if(ok){ answered.add(cur); updateWires(true); const rv=box.querySelector(".reveal"); if(rv) rv.remove(); } };
+      opts.appendChild(b);
+    });
+    box.appendChild(opts); box.appendChild(fb);
+    if (answered.has(cur)){ const j=s.q.o.findIndex(o=>o[1]); const b=opts.children[j]; b.classList.add("right"); fb.className="fb ok"; fb.innerHTML=s.q.o[j][2]; }
+    else { const r=document.createElement("button"); r.type="button"; r.className="reveal"; r.textContent="Show the answer"; r.onclick=()=>opts.children[s.q.o.findIndex(o=>o[1])].click(); box.appendChild(r); }
+    qb.appendChild(box);
+  }
+  if (s.sim) buildSim(); else stopSim();
+  if (s.table) buildTable();
+  $("back").disabled = cur===0;
+  $("next").textContent = cur===STEPS.length-1 ? "Start again ↺" : "Next →";
+}
+function updateWires(flash){
+  const on = wiresShown(); const s = STEPS[cur];
+  for (const id of Object.keys(W)){
+    const g = $("w-"+id); g.classList.toggle("hidden", !on.has(id));
+    g.classList.toggle("new", !!(s.wires && s.wires.includes(id) && on.has(id)));
+  }
+}
+function go(i){ cur = Math.max(0, Math.min(STEPS.length-1, i)); render(); }
+$("back").onclick=()=>go(cur-1);
+$("next").onclick=()=>go(cur===STEPS.length-1?0:cur+1);
+document.addEventListener("keydown",e=>{ if(e.target.tagName==="INPUT") return; if(e.key==="ArrowRight") $("next").click(); if(e.key==="ArrowLeft" && cur>0) go(cur-1); });
+
+// ---- simulation ----
+const THRESH = 400; let pumpOn = false;
+function buildSim(){
+  $("extra").innerHTML = `<div class="sim">
+    <label for="moist">Soil moisture: <span id="mlabel"></span></label>
+    <input id="moist" type="range" min="0" max="100" value="25">
+    <div class="chain" id="chain"></div>
+    <div class="tip">In our sketch: reading below ${THRESH} means <b>dry</b>. (Some sensors count the other way – always test yours.)</div>
+  </div>`;
+  const m=$("moist"); m.oninput=()=>simUpdate(+m.value); simUpdate(+m.value);
+}
+function simUpdate(v){
+  const reading = Math.round(v*10.23);
+  const dry = reading < THRESH; pumpOn = dry;
+  $("mlabel").textContent = v<35?"dry":(v<60?"slightly damp":"wet");
+  $("chain").innerHTML = `<span class="pill">A0 = ${reading}</span><i>→</i><span class="pill ${dry?"off":"on"}">${dry?"Soil DRY":"Soil OK"}</span><i>→</i><span class="pill">D8 ${dry?"HIGH":"LOW"} · D7 LOW</span><i>→</i><span class="pill ${dry?"on":"off"}">Pump ${dry?"ON":"OFF"}</span>`;
+  const soil = $("soil"); const t=v/100; soil.setAttribute("fill", `rgb(${Math.round(160-90*t)},${Math.round(125-70*t)},${Math.round(90-55*t)})`);
+  const leaves = $("plant").querySelectorAll("path"); leaves.forEach((p,i)=>{ if(i) p.setAttribute("fill", v<20?"#9e9d24":(i===3?"#66bb6a":"#43a047")); });
+  drawFlows(true);
+}
+function stopSim(){ pumpOn=false; drawFlows(false); $("soil").setAttribute("fill","#8a6a4a"); $("plant").querySelectorAll("path").forEach((p,i)=>{ if(i) p.setAttribute("fill", i===3?"#66bb6a":"#43a047"); }); }
+function drawFlows(sim){
+  const f=$("flows"); f.innerHTML="";
+  const add = id => { const pl=document.createElementNS(NS,"polyline"); pl.setAttribute("points",W[id].p); pl.setAttribute("class","flow"); f.appendChild(pl); };
+  if (sim){ ["b_pos","b_neg","l_5v","l_gnd","u_5v","u_gnd","s_sig"].forEach(add); }
+  if (sim && pumpOn){ ["p_red","p_blk","in1"].forEach(add); }
+  $("tubeFlow").style.display = (sim && pumpOn) ? "" : "none";
+}
+
+function buildTable(){
+  const rows = Object.values(W).map(w=>`<tr><td><i class="sw" style="background:var(${w.c})"></i></td><td>${w.from}</td><td>→ ${w.to}</td><td><input type="checkbox" aria-label="done"></td></tr>`).join("");
+  $("extra").innerHTML = `<div class="tw"><table><tr><th></th><th>From</th><th>To</th><th>✓</th></tr>${rows}</table></div>
+   <p class="tip" style="margin-top:10px">Water tube: pump outlet → plant pot. No USB cable – the battery powers everything.</p>`;
+}
+
+render();
+})();
+</script>
+
+</body></html>
